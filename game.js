@@ -147,6 +147,25 @@ document.addEventListener('keydown', function(e) {
   }
 });
 
+let touchStartX = 0;
+
+canvas.addEventListener('touchstart', function(e) {
+  touchStartX = e.touches[0].clientX;
+});
+
+canvas.addEventListener('touchmove', function(e) {
+  const touchX = e.touches[0].clientX;
+  const deltaX = touchX - touchStartX;
+
+  if (deltaX < 0 && platform.x > 0) {
+    platform.x += deltaX; // Chapga harakat
+  } else if (deltaX > 0 && platform.x + platform.width < canvas.width) {
+    platform.x += deltaX; // O'ngga harakat
+  }
+
+  touchStartX = touchX; // Yangi boshlang'ich nuqtani yangilash
+});
+
 CanvasRenderingContext2D.prototype.roundRect = function (x, y, width, height, radius) {
   if (width < 2 * radius) radius = width / 2;
   if (height < 2 * radius) radius = height / 2;
