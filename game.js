@@ -27,6 +27,18 @@ let score = 0;
 let highScore = localStorage.getItem('highScore') || 0;
 let gameOver = false;
 
+let lives = 3; // O'yinchi yuraklari
+
+function drawLives() {
+  ctx.fillStyle = 'red';
+  for (let i = 0; i < lives; i++) {
+    ctx.beginPath();
+    ctx.arc(20 + i * 30, 50, 10, 0, Math.PI * 2); // Yuraklarni chizish
+    ctx.fill();
+    ctx.closePath();
+  }
+}
+
 const catchSound = document.getElementById('catchSound');
 const gameOverSound = document.getElementById('gameOverSound');
 
@@ -66,6 +78,8 @@ function draw() {
   ctx.fillStyle = 'black';
   ctx.font = '20px Arial';
   ctx.fillText('Score: ' + score, 10, 30);
+
+  drawLives(); // Yuraklarni chizish
 }
 
 function update() {
@@ -93,23 +107,27 @@ function update() {
       score++;
     }
 
-    // Power-up ehtimoli
     ball.color = Math.random() < 0.1 ? "gold" : "normal";
 
-    // Sekin-sekin qiyinlashish
-    if (score % 5 === 0 && ball.speed < 8) { // Har 5 ballda
+    if (score % 5 === 0 && ball.speed < 8) {
       ball.speed += 0.2;
     }
 
-    if (score % 10 === 0 && platform.width > 50) { // Har 10 ballda kichrayadi
-      platform.width *= 0.98; // faqat 2% kichrayadi
+    if (score % 10 === 0 && platform.width > 50) {
+      platform.width *= 0.98;
     }
 
     catchSound.play();
   }
 
   if (ball.y > canvas.height) {
-    endGame();
+    lives--; // Yurakni kamaytirish
+    if (lives <= 0) {
+      endGame();
+    } else {
+      ball.y = 0;
+      ball.x = Math.random() * (canvas.width - ball.radius * 2) + ball.radius;
+    }
   }
 }
 
@@ -134,6 +152,7 @@ function restartGame() {
   ball.color = "normal";
   platform.x = 150;
   platform.width = 100;
+  lives = 3; // Yuraklarni tiklash
   gameOver = false;
   document.getElementById('gameOverScreen').classList.add('hidden');
   gameLoop();
@@ -166,6 +185,16 @@ canvas.addEventListener('touchmove', function(e) {
   touchStartX = touchX; // Yangi boshlang'ich nuqtani yangilash
 });
 
+canvas.addEventListener('mousemove', function(e) {
+  const rect = canvas.getBoundingClientRect();
+  const mouseX = e.clientX - rect.left; // Sichqoncha koordinatasini olish
+  platform.x = mouseX - platform.width / 2; // Platformani sichqoncha bilan bog'lash
+
+  // Platformani o'yin maydonidan chiqib ketmasligini ta'minlash
+  if (platform.x < 0) platform.x = 0;
+  if (platform.x + platform.width > canvas.width) platform.x = canvas.width - platform.width;
+});
+
 CanvasRenderingContext2D.prototype.roundRect = function (x, y, width, height, radius) {
   if (width < 2 * radius) radius = width / 2;
   if (height < 2 * radius) radius = height / 2;
@@ -178,6 +207,9 @@ CanvasRenderingContext2D.prototype.roundRect = function (x, y, width, height, ra
   this.closePath();
   return this;
 };
+
+
+
 
 function gameLoop() {
   draw();
