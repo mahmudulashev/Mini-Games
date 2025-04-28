@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Catch the Ball - Super Version</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <canvas id="gameCanvas" width="400" height="600"></canvas>
+
+  <div id="gameOverScreen" class="hidden">
+    <h1>Game Over</h1>
+    <p>Score: <span id="finalScore"></span></p>
+    <p>High Score: <span id="highScore"></span></p>
+    <button onclick="restartGame()">Restart</button>
+  </div>
+
+  <audio id="catchSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_8b735f1a0e.mp3?filename=click-124467.mp3"></audio>
+  <audio id="gameOverSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_f6e78b4b8e.mp3?filename=game-over-arcade-6435.mp3"></audio>
+
+  <script src="game.js"></script>
+</body>
+</html>
